@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Info Lokasi</title>
+  <style>
+     * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+
+  h2 {
+    color: #fff;
+    margin-bottom: 15px;
+    font-size: 26px;
+  }
+
+  blockquote {
+    background: rgba(255,255,255,0.2);
+    color: #e0e0e0;
+    padding: 12px 20px;
+    border-radius: 10px;
+    max-width: 700px;
+    margin: 15px auto;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  p {
+    color: #fff;
+    margin: 20px 0;
+    font-size: 16px;
+  }
+
+  button {
+    padding: 14px 30px;
+    font-size: 16px;
+    background: #00d2ff;
+    color: #1e3c72;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 20px 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  button:hover {
+    background: #00b8e6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+
+  #lokasi {
+    background: rgba(255,255,255,0.95);
+    color: #2a5298;
+    padding: 15px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 10px auto;
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  #ip {
+    background: rgba(255,255,255,0.95);
+    color: #2a5298;
+    padding: 12px 20px;
+    border-radius: 12px;
+    display: inline-block;
+    margin: 10px auto;
+    font-weight: bold;
+  }
+
+  #map {
+    margin: 30px auto;
+    max-width: 90%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  }
+
+  #map iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  </style>
+</head>
+<body style="text-align:center; font-family:sans-serif;">
+  <h2> Mengambil data Geolokasi dengan API Google Map dan Alamat IP Perangkat Kita</h2>
+  <blockquote>Mengambil data Geolokasi kordinat dan get DOM API maps.google.com untuk menampilkan peta dan Get Alamat IP Perangkat Kita dari API ipify.org</blockquote>
+  <p>Klik tombol untuk melihat lokasi di peta dan alamat IP perangkat kamu.</p>
+  <button onclick="getLocation()">Klik untuk mendapatkan titik kordinat dan IP perangkat</button>
+
+  <p id="lokasi"></p>
+  <p id="ip"></p>
+  <div id="map" style="width:100%; height:400px;"></div>
+
+  <script>
+    const lokasi = document.getElementById("lokasi");
+    const ip = document.getElementById("ip");
+    const map = document.getElementById("map");
+
+    function getLocation() {
+      if (!navigator.geolocation) {
+        lokasi.innerText = "Browser tidak mendukung geolokasi.";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(pos => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+
+        lokasi.innerHTML = `Latitude: ${lat}<br>Longitude: ${lon}`;
+        map.innerHTML = `<iframe width="100%" height="400" 
+          src="https://maps.google.com/maps?q=${lat},${lon}&z=15&output=embed" 
+          frameborder="0" allowfullscreen></iframe>`;
+      }, () => {
+        lokasi.innerText = "Tidak bisa mengambil lokasi.";
+      });
+
+      // Ambil IP
+      fetch("https://api.ipify.org?format=json")
+        .then(res => res.json())
+        .then(data => ip.innerText = "IP Anda: " + data.ip)
+        .catch(() => ip.innerText = "Gagal mengambil IP.");
+    }
+  </script>
+
+</body>
+</html>

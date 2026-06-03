@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Info Cuaca</title>
+  <style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2193b0 0%, #6dd5ed 100%);
+    min-height: 100vh;
+    padding: 30px 20px;
+  }
+
+  h1 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 32px;
+    text-shadow: 3px 3px 6px rgba(0,0,0,0.2);
+  }
+
+  h2 {
+    color: #fff;
+    margin: 25px 0 15px 0;
+    font-size: 24px;
+  }
+
+  input {
+    padding: 14px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 30px;
+    width: 280px;
+    outline: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  button {
+    padding: 14px 28px;
+    font-size: 16px;
+    background: #ff8c42;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-left: 12px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+  }
+
+  button:hover {
+    background: #ff6b1a;
+    transform: scale(1.02);
+  }
+
+  #hasil {
+    margin-top: 30px;
+    max-width: 550px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    backdrop-filter: blur(5px);
+  }
+
+  .big-temp {
+    font-size: 56px;
+    font-weight: bold;
+    color: #ff8c42;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  #hasil strong {
+    display: block;
+    text-align: center;
+    font-size: 20px;
+    color: #2193b0;
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 12px 8px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  th {
+    width: 45%;
+    color: #2c3e50;
+    font-weight: 600;
+  }
+
+  td {
+    color: #555;
+    font-weight: 500;
+  }
+
+  #hasil p {
+    text-align: center;
+    padding: 20px;
+    background: #ffe0b2;
+    color: #e65100;
+    border-radius: 12px;
+    font-weight: bold;
+  }
+
+  /* Container untuk form */
+  div:has(> input) {
+    margin-bottom: 10px;
+  }
+</style>
+</head>
+<body>
+
+  <h1>TUGAS PRAKTIKUM 1</h1>
+
+  <h2>Informasi Cuaca</h2>
+  <input type="text" id="kota" placeholder="Masukkan nama kota">
+  <button onclick="ambilCuaca()">Lihat Cuaca</button>
+
+  <div id="hasil"></div>
+
+  <script>
+    const apiKey = '7fd3e8d63c933307fd93656f78a2bad8'; // Ganti dengan API Key masing-masing
+
+    function ambilCuaca() {
+      const namaKota = document.getElementById("kota").value;
+      const url = `https://api.openweathermap.org/data/2.5/weather?q=${namaKota}&units=metric&appid=${apiKey}&lang=id`;
+
+      fetch(url)
+        .then(response => {
+          if (!response.ok) throw new Error("Kota tidak ditemukan!");
+          return response.json();
+        })
+        .then(data => {
+          const suhu = data.main.temp;
+          const suhuMin = data.main.temp_min;
+          const suhuMax = data.main.temp_max;
+          const cuaca = data.weather[0].description;
+          const kelembaban = data.main.humidity;
+          const tekanan = data.main.pressure;
+          const angin = data.wind.speed;
+          const arahAngin = data.wind.deg;
+          const awan = data.clouds.all;
+          const visibility = data.visibility / 1000; // meter to km
+          const nama = data.name;
+
+          document.getElementById("hasil").innerHTML = `
+            <div>
+              <div class="big-temp">${Math.round(suhu)}°C</div>
+              <strong>${cuaca.charAt(0).toUpperCase() + cuaca.slice(1)}</strong>
+              <table>
+                <tr><th>Kota</th><td>${nama}</td></tr>
+                <tr><th>Suhu Min - Max</th><td>${suhuMin}°C - ${suhuMax}°C</td></tr>
+                <tr><th>Kelembaban</th><td>${kelembaban}%</td></tr>
+                <tr><th>Tekanan</th><td>${tekanan} mb</td></tr>
+                <tr><th>Kecepatan Angin</th><td>${angin} m/s</td></tr>
+                <tr><th>Arah Angin</th><td>${arahAngin}°</td></tr>
+                <tr><th>Tutupan Awan</th><td>${awan}%</td></tr>
+                <tr><th>Jarak Pandang</th><td>${visibility} km</td></tr>
+              </table>
+            </div>
+          `;
+        })
+        .catch(error => {
+          document.getElementById("hasil").innerHTML = `<p style="color:red">${error.message}</p>`;
+        });
+    }
+  </script>
+
+</body>
+</html>

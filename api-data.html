@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Info Negara</title>
+  <style>
+    * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  h2 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  }
+
+  input {
+    padding: 12px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    width: 250px;
+    outline: none;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  button {
+    padding: 12px 25px;
+    font-size: 16px;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-left: 10px;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  button:hover {
+    background: #ff5252;
+    transform: scale(1.05);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 70%;
+    margin: 30px auto;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  }
+
+  th, td {
+    border: none;
+    padding: 15px 20px;
+    text-align: left;
+  }
+
+  th {
+    background: #4a5568;
+    color: white;
+    font-weight: 600;
+    width: 30%;
+  }
+
+  td {
+    background: #f7fafc;
+    color: #2d3748;
+  }
+
+  img {
+    max-width: 100px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+
+  #result {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  #result p {
+    background: #fff3cd;
+    color: #856404;
+    padding: 15px;
+    border-radius: 10px;
+    display: inline-block;
+  }
+  </style>
+</head>
+<body>
+  <center>
+    <h2>Cari Informasi Negara</h2>
+    <input id="countryInput" placeholder="Contoh: Indonesia" />
+    <button onclick="cariNegara()">Cari</button>
+  </center>
+
+  <div id="result"></div>
+
+  <script>
+    function cariNegara() {
+      const nama = document.getElementById("countryInput").value.trim();
+      if (!nama) return alert("Masukkan nama negara.");
+
+      fetch(`https://restcountries.com/v3.1/name/${encodeURIComponent(nama)}`)
+        .then(res => res.json())
+        .then(data => {
+          const d = data[0];
+          const bahasa = d.languages ? Object.values(d.languages).join(', ') : 'Tidak tersedia';
+          document.getElementById("result").innerHTML = `
+            <table>
+              <tr><th>Nama</th><td>${d.name.common}</td></tr>
+              <tr><th>Populasi</th><td>${d.population.toLocaleString()}</td></tr>
+              <tr><th>Wilayah</th><td>${d.region}</td></tr>
+              <tr><th>Bahasa</th><td>${bahasa}</td></tr>
+              <tr><th>Bendera</th><td><img src="${d.flags.svg}" alt="Bendera"></td></tr>
+            </table>`;
+        })
+        .catch(() => {
+          document.getElementById("result").innerHTML = `<p style="color:red;">Negara tidak ditemukan.</p>`;
+        });
+    }
+  </script>
+</body>
+</html>
